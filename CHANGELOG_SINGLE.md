@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file. See [conventional commits](https://www.conventionalcommits.org/) for commit guidelines.
 
 - - -
+## [0.0.1](https://github.com/zaharsk/cog-action/compare/4cf7c77b36ee6e8dea6ca57eb7a508051ea4bd1e..0.0.1) - 2026-06-18
+
+- - -
+
 ## [0.5.0](https://github.com/zaharsk/cog-action/compare/3b2b010536eee8f03e2b753a79dc4412330ef403..0.5.0) - 2026-06-18
 #### Features
 - Added bumped and version to all commands output - ([3b2b010](https://github.com/zaharsk/cog-action/commit/3b2b010536eee8f03e2b753a79dc4412330ef403)) - [@zaharsk ](https://github.com/zaharsk )
