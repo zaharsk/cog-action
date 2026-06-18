@@ -1,0 +1,65 @@
+name: Selftest
+
+on: workflow_dispatch
+
+permissions:
+  contents: write
+
+jobs:
+  self-execution:
+    runs-on: ubuntu-latest
+    name: Self execution
+    steps:
+      - name: Checkout
+        id: checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Verify all commit messages against the conventional commit specification
+        id: check_single
+        uses: ./
+        with:
+          verbose: INFO
+          config: ./cog_single.toml
+          cmd: check
+
+      - name: Display a changelog for the given commit oid range
+        id: changelog_single
+        uses: ./
+        with:
+          config: ./cog_single.toml
+          cmd: changelog
+
+      - name: Commit changelog from latest tag to HEAD and create new tag
+        id: bump_single
+        uses: ./
+        with:
+          config: ./cog_single.toml
+          cmd: bump
+          args: --auto
+
+      - name: Get current version
+        id: current_version_single
+        uses: ./
+        with:
+          config: ./cog_single.toml
+          cmd: get-version
+          args: --fallback 0.0.1
+
+      - name: Show outputs
+        id: show_output
+        shell: bash
+        run: |
+          echo "==== SINGLE OUTPUTS START ===="
+          echo "Changelog:"
+          echo "${{ steps.changelog_single.outputs.changelog }}"
+          echo "Bumped: ${{ steps.bump_single.outputs.bumped }}"
+          echo "Version after bump command: ${{ steps.bump_single.outputs.version }}"
+          echo "Tag after bump command: ${{ steps.bump_single.outputs.tag }}"
+          echo "Current version: ${{ steps.current_version_single.outputs.version }}"
+          echo "Current tag: ${{ steps.current_version_single.outputs.tag }}"
+          echo "==== SINGLE OUTPUTS END ===="
+
+      # # Don't forget to push created commit with post_bump_hooks in cog.toml
+      # # If you don't use tag_prefix, you can make git push here

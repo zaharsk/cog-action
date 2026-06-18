@@ -1,0 +1,39 @@
+name: Matrix test
+
+on:
+  workflow_dispatch:
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-slim, ubuntu-latest, ubuntu-26.04, ubuntu-26.04-arm]
+
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - id: checkout
+        name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - id: check
+        name: Check commits
+        uses: ./
+        with:
+          cmd: check
+
+      - id: current_version
+        name: Get current version
+        uses: ./
+        with:
+          verbose: error
+          cmd: get-version
+          args: --fallback 0.0.1
+
+      - id: show_output
+        name: Print outputs
+        shell: bash
+        run: |
+          echo "Current version: ${{ steps.current_version.outputs.version }}"

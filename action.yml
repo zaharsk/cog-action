@@ -1,0 +1,79 @@
+name: Cocogitto
+description: Cocogitto action
+inputs:
+  git-user-name:
+    description: User for versions commit
+    default: github-actions[bot]
+  git-user-email:
+    description: Email for versions commit
+    default: 41898282+github-actions[bot]@users.noreply.github.com
+  version:
+    description: Cocogitto version
+    default: latest
+  verbose:
+    description: The level of verbosity
+    default: "DEFAULT" # / ERROR / WARNING / INFO
+  config:
+    description: "Path to config file [default: ./cog.toml]"
+    default: ./cog.toml
+  cmd:
+    description: "One of the cog commands: check / changelog / get-version / bump"
+    required: true
+  args:
+    description: Arguments for cog command
+    default: ""
+  nopush:
+    description: Skip push to repo
+    default: "false"
+
+outputs:
+  version:
+    description: Current version
+    value: ${{ steps.run.outputs.version }}
+
+  changelog:
+    description: Changelog for the given commit oid range
+    value: ${{ steps.run.outputs.changelog }}
+
+  bumped:
+    description: Is true if new version was commited
+    value: ${{ steps.run.outputs.bumped }}
+
+  tag:
+    description: Varsion tag
+    value: ${{ steps.run.outputs.tag }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Configure git
+      id: git_config
+      shell: bash
+      run: |
+        git config --global user.name  ${{ inputs.git-user-name }}
+        git config --global user.email  ${{ inputs.git-user-email }}
+
+    - name: Install Cocogitto
+      id: install
+      shell: bash
+      run: ${GITHUB_ACTION_PATH}/install.sh
+      env:
+        VERSION: ${{ inputs.version }}
+
+    - name: Run cog
+      id: run
+      shell: bash
+      run: |
+        CONFIG="${{ inputs.config }}" \
+        VERBOSE="${{ inputs.verbose }}" \
+        CMD="${{ inputs.cmd }}" \
+        ARGS="${{ inputs.args }}" \
+        $GITHUB_ACTION_PATH/run.sh
+
+    - name: Push changes
+      id: push
+      if: ${{ steps.run.outputs.bumped == 'true' &&  inputs.nopush == 'false' }}
+      shell: bash
+      run: |
+        test -n "${{ steps.run.outputs.tag }}"
+        git push origin HEAD "${{ steps.run.outputs.tag }}"

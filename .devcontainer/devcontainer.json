@@ -1,0 +1,69 @@
+{
+  "name": "Devcontainer",
+
+  "image": "ghcr.io/actions/actions-runner:latest",
+
+  "initializeCommand": ".devcontainer/initialize-command.sh",
+  "postCreateCommand": ".devcontainer/post-create-command.sh",
+
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker:3": {
+      "moby": false
+    },
+    "ghcr.io/devcontainers-extra/features/act:1": {}
+  },
+
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "chat.disableAIFeatures": true,
+        "telemetry.telemetryLevel": "off",
+        "workbench.startupEditor": "none",
+
+        "git.alwaysSignOff": true,
+        "git.autofetch": true,
+        "git.confirmSync": false,
+
+        "terminal.integrated.fontFamily": "JetBrainsMono Nerd Font Mono",
+        "terminal.integrated.initialHint": false,
+
+        "editor.fontFamily": "JetBrainsMono Nerd Font Propo",
+        "editor.fontSize": 12,
+        "editor.fontLigatures": true,
+
+        "editor.formatOnSave": true,
+        "editor.formatOnPaste": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+        "shellformat.path": "${containerWorkspaceFolder}/.devcontainer/bin/shfmt",
+        "[shellscript]": {
+          "editor.defaultFormatter": "lumirelle.shell-format-rev"
+        },
+        "[ignore]": {
+          "editor.defaultFormatter": "lumirelle.shell-format-rev"
+        },
+        "[toml]": {
+          "editor.defaultFormatter": "tamasfe.even-better-toml"
+        },
+        "[yaml]": {
+          "editor.defaultFormatter": "esbenp.prettier-vscode"
+        }
+        // --- --- --- //
+      },
+
+      "extensions": [
+        "barnim.markdown-code-copy-button",
+        "esbenp.prettier-vscode",
+        "lumirelle.shell-format-rev",
+        "irongeek.vscode-env",
+        "redhat.vscode-yaml",
+        "tamasfe.even-better-toml",
+        // --- --- --- //,
+        "SanjulaGanepola.github-local-actions",
+        "github.vscode-github-actions"
+      ]
+    }
+  },
+
+  "runArgs": ["--env-file", ".devcontainer/.env"]
+}
